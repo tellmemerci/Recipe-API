@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory
+from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
 
 @admin.register(RecipeCategory)
 class RecipeCategoryAdmin(admin.ModelAdmin):
@@ -31,7 +31,7 @@ class RecipeStepAdmin(admin.ModelAdmin):
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
-    list_display = ('recipe', 'ingredient_name', 'quantity', 'measurement_name')
+    list_display = ('recipe', 'ingredient', 'quantity')
 
 @admin.register(UserRecipes)
 class UserRecipesAdmin(admin.ModelAdmin):
@@ -50,6 +50,12 @@ class UserAdmin(admin.ModelAdmin):
 @admin.register(Calories)
 class CaloriesAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'protein', 'fat', 'carbohydrates')
+
+@admin.register(Ingredient)
+class Admin(admin.ModelAdmin):
+    list_display = ('name', 'measurement_name')
+
+
 
 admin.site.site_header = 'Администрирование сайта рецептов'
 admin.site.site_title = 'Панель администратора'

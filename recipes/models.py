@@ -50,18 +50,38 @@ class Recipe(models.Model):
     def __str__(self):
         return self.name
 
-class RecipeIngredient(models.Model):
-    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
-    ingredient_name = models.CharField(max_length=500,  verbose_name='Название ингредиентов')
-    quantity = models.CharField(max_length=500, verbose_name='Количество')
-    measurement_name = models.CharField(max_length=500, verbose_name='Измерение')
+class Ingredient(models.Model):
+    name = models.CharField(max_length=500, verbose_name='Название ингредиента')
+    measurement_name = models.CharField(max_length=50, choices=(('шт', 'шт'), ('л', 'л'), ('л', 'л'), ('мл', 'мл'),
+                                                                ('гр', 'гр'), ('чайная ложка', 'чайная ложка'),
+                                                                ('столовая ложка', 'столовая ложка')
+                                                                , ('кг', 'кг'), ('мг', 'мг')),
+                              default='гр', verbose_name='Измерение')
+
+    class Meta:
+        verbose_name = 'Ингредиент'
+        verbose_name_plural = 'Ингредиенты'
 
     def __str__(self):
-        return f"{self.ingredient_name} ({self.quantity})"
+        return self.name
+
+
+
+
+
+class RecipeIngredient(models.Model):
+    recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
+    ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, verbose_name='Ингредиент')
+    quantity = models.CharField(max_length=500, verbose_name='Количество')
 
     class Meta:
         verbose_name = 'Ингредиент рецепта'
         verbose_name_plural = 'Ингредиенты рецептов'
+
+    def __str__(self):
+        return f"{self.ingredient.name} - {self.quantity}"
+
+
 
 class RecipeStep(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
