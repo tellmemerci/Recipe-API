@@ -1,4 +1,7 @@
 from django.contrib import admin
+from import_export.admin import ImportExportActionModelAdmin
+
+from .export import RecipeResource
 from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
 
 @admin.register(RecipeCategory)
@@ -22,9 +25,10 @@ class RecipeCommentAdmin(admin.ModelAdmin):
     #readonly_fields = ('text', 'created_at')
 
 @admin.register(Recipe)
-class RecipeAdmin(admin.ModelAdmin):
+class RecipeAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
     list_display = ('name', 'adversting_text')
     search_fields = ('name', 'adversting_text')
+
 
 @admin.register(RecipeStep)
 class RecipeStepAdmin(admin.ModelAdmin):
@@ -43,7 +47,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
             return "Нет данных"
     get_measurement_unit.short_description = 'Единица измерения'
 
-    def quantity_with_unit(self, obj):  # Новый метод
+    def quantity_with_unit(self, obj):
         try:
             measurement_unit = obj.ingredient.measurement_name
             return f"{obj.quantity} {measurement_unit}"
