@@ -14,9 +14,11 @@ class RecipeCategoryAdmin(admin.ModelAdmin):
 @admin.register(RecipeComment)
 class RecipeCommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe', 'text', 'status')
+    list_filter = ('user', 'recipe', 'status')
     date_hierarchy = 'created_at'
     list_display_links = ('user', 'text', 'recipe', 'status')
     raw_id_fields = ('user', 'recipe')
+    search_fields = ('user', 'status')
     #readonly_fields = ('text', 'created_at')
 
 @admin.register(Recipe)
@@ -31,7 +33,24 @@ class RecipeStepAdmin(admin.ModelAdmin):
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
-    list_display = ('recipe', 'ingredient', 'quantity')
+    list_display = ('recipe', 'ingredient', 'quantity', 'get_measurement_unit')
+
+    def get_measurement_unit(self, obj):
+        """Метод для отображения единицы измерения."""
+        try:
+            return obj.ingredient.measurement_name
+        except Ingredient.DoesNotExist:
+            return "Нет данных"
+    get_measurement_unit.short_description = 'Единица измерения'
+
+    def quantity_with_unit(self, obj):  # Новый метод
+        try:
+            measurement_unit = obj.ingredient.measurement_name
+            return f"{obj.quantity} {measurement_unit}"
+        except Ingredient.DoesNotExist:
+            return "Нет данных"
+
+    quantity_with_unit.short_description = "Количество и единица"
 
 @admin.register(UserRecipes)
 class UserRecipesAdmin(admin.ModelAdmin):
@@ -53,7 +72,7 @@ class CaloriesAdmin(admin.ModelAdmin):
 
 @admin.register(Ingredient)
 class Admin(admin.ModelAdmin):
-    list_display = ('name', 'measurement_name')
+    pass
 
 
 
