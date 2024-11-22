@@ -6,5 +6,3 @@ class RecipeResource(ModelResource):
         model = Recipe
         fields = '__all__'
         formats = [XLSX]
-
-

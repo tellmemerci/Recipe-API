@@ -1,6 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
-
+from simple_history.admin import SimpleHistoryAdmin
 from .export import RecipeResource
 from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
 
@@ -24,20 +24,24 @@ class RecipeCommentAdmin(admin.ModelAdmin):
     search_fields = ('user', 'status')
     #readonly_fields = ('text', 'created_at')
 
-@admin.register(Recipe)
-class RecipeAdmin(ImportExportActionModelAdmin, admin.ModelAdmin):
-    list_display = ('name', 'adversting_text')
+class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
+    list_display = ('name', 'adversting_text', 'status_site')
+    history_list_display = ['status']
     search_fields = ('name', 'adversting_text')
-
+    list_filter = ('status_site',)
+admin.site.register(Recipe, RecipeAdmin)
 
 @admin.register(RecipeStep)
 class RecipeStepAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'step_number', 'description')
+    list_filter = ('recipe', 'step_number')
+    search_fields = ('recipe',)
 
 
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingredient', 'quantity', 'get_measurement_unit')
+    search_fields = ('recipe', 'ingredient')
 
     def get_measurement_unit(self, obj):
         """Метод для отображения единицы измерения."""
@@ -64,19 +68,24 @@ class UserRecipesAdmin(admin.ModelAdmin):
 @admin.register(RecipeLike)
 class RecipeLikeAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
+    search_fields = ('recipe', 'user')
 
 
 @admin.register(User)
 class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'role')
+    search_fields = ('username', 'role',)
 
 @admin.register(Calories)
 class CaloriesAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'protein', 'fat', 'carbohydrates')
+    search_fields = ('recipe',)
 
 @admin.register(Ingredient)
 class Admin(admin.ModelAdmin):
-    pass
+    search_fields = ('name',)
+    list_display = ('name', 'measurement_name')
+    list_filter = ('measurement_name',)
 
 
 

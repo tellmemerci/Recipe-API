@@ -1,7 +1,16 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-
+from simple_history.models import HistoricalRecords
 class User(AbstractUser):
+    ''' Модель описывающая пользователя:
+    gender - пол
+    date_of_birth - дата рождения
+    username - имя пользователя
+    email - электронная почта
+    password - пароль
+    created_at - дата создания
+    role - роль пользователя
+    history - метод, для отслеживания изменений, которые были изменены в API '''
     gender = models.CharField(max_length=20, choices=(('Мужской', 'Мужской'), ('Женский', 'Женский')),
                               default='Мужской', verbose_name='Пол')
     date_of_birth = models.DateField(null=True, blank=True, verbose_name='Дата рождения')
@@ -10,6 +19,7 @@ class User(AbstractUser):
     password = models.CharField(max_length=255, verbose_name='Пароль')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата регистрации')
     role = models.CharField(max_length=50, default='Пользователь', verbose_name='Роль')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Пользователь'
@@ -41,7 +51,10 @@ class Recipe(models.Model):
     adversting_text = models.CharField(max_length=500, blank=True, verbose_name='Рекламирующий текст')
     time_of_cooking = models.IntegerField(verbose_name='Время приготовления')
     number_of_servings = models.IntegerField(verbose_name='Количество персон')
-    status_site = models.CharField(max_length=50, blank=True, verbose_name='Статус на сайте')
+    status_site = models.CharField(max_length=50, choices=(('На модерации', 'На модерации'), ('Опубликован', 'Опубликован'),
+                                                            ('Отклонят', 'Отклонят'),  ('Снят с публикации', 'Снят с публикации')),
+                             verbose_name='Статус на сайте')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -73,6 +86,7 @@ class RecipeIngredient(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     ingredient = models.ForeignKey(Ingredient, on_delete=models.CASCADE, verbose_name='Ингредиент')
     quantity = models.CharField(max_length=500, verbose_name='Количество')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Ингредиент рецепта'
@@ -88,6 +102,7 @@ class RecipeStep(models.Model):
     step_number = models.IntegerField(verbose_name='Номер шага')
     description = models.TextField(verbose_name='Описание')
     photo_url = models.URLField(blank=True, verbose_name='Ссылка на фото шага')
+    history = HistoricalRecords()
 
     def __str__(self):
         return f"Шаг {self.step_number}"
@@ -99,6 +114,7 @@ class RecipeStep(models.Model):
 class RecipeLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Лайк на рецепт')
+    history = HistoricalRecords()
 
     class Meta:
         unique_together = ('user', 'recipe')
@@ -114,6 +130,7 @@ class RecipeComment(models.Model):
                                                       ('Отклонят', 'Отклонят')),
                               default='На модерации', verbose_name='Статус комментария')
     text_of_moderation = models.CharField(max_length=500, blank=True, verbose_name='Ответ модератора')
+    history = HistoricalRecords()
 
     class Meta:
         verbose_name = 'Комментарий к рецепту'
@@ -124,6 +141,7 @@ class Calories(models.Model):
     protein = models.IntegerField(null=True, blank=True, verbose_name='Белки')
     fat = models.IntegerField(null=True, blank=True, verbose_name='Жиры')
     carbohydrates = models.IntegerField(null=True, blank=True, verbose_name='Углеводы')
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.recipe.name
@@ -137,6 +155,7 @@ class UserRecipes(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
+    history = HistoricalRecords()
 
 
 
@@ -148,6 +167,7 @@ class UserRecipes(models.Model):
 class RecipeCategory(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     category_name = models.CharField(max_length=255, verbose_name='Категория')
+    history = HistoricalRecords()
 
     def __str__(self):
         return self.category_name

@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'recipes',
     'import_export',
+    'drf_yasg',
+    'simple_history',
     'rest_framework',
 ]
 
@@ -49,6 +51,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
+    'simple_history.middleware.HistoryRequestMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 

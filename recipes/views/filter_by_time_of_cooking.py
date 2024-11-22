@@ -15,3 +15,4 @@ class RecipeByTimeOfCooking(generics.ListAPIView):
             return Recipe.objects.filter(time_of_cooking=time_of_cooking)
         except (KeyError, ValueError) as e:
             return Response({"error": f"Invalid input: {str(e)}"}, status=status.HTTP_400_BAD_REQUEST)
+
