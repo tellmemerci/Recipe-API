@@ -1,7 +1,6 @@
 from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
-from .export import RecipeResource
 from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
 
 @admin.register(RecipeCategory)
@@ -17,18 +16,23 @@ class RecipeCategoryAdmin(admin.ModelAdmin):
 @admin.register(RecipeComment)
 class RecipeCommentAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe', 'text', 'status')
-    list_filter = ('user', 'recipe', 'status')
+    list_filter = ('user', 'recipe', 'status',)
     date_hierarchy = 'created_at'
     list_display_links = ('user', 'text', 'recipe', 'status')
     raw_id_fields = ('user', 'recipe')
-    search_fields = ('user', 'status')
+    search_fields = ('user', 'text')
     #readonly_fields = ('text', 'created_at')
+
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
 
 class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
     list_display = ('name', 'adversting_text', 'status_site')
     history_list_display = ['status']
     search_fields = ('name', 'adversting_text')
     list_filter = ('status_site',)
+    inlines = [RecipeIngredientInline]
 admin.site.register(Recipe, RecipeAdmin)
 
 @admin.register(RecipeStep)
@@ -38,10 +42,12 @@ class RecipeStepAdmin(admin.ModelAdmin):
     search_fields = ('recipe',)
 
 
+
 @admin.register(RecipeIngredient)
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingredient', 'quantity', 'get_measurement_unit')
     search_fields = ('recipe', 'ingredient')
+
 
     def get_measurement_unit(self, obj):
         """Метод для отображения единицы измерения."""
@@ -63,12 +69,14 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
 @admin.register(UserRecipes)
 class UserRecipesAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
+    search_fields = ('recipe', 'user')
 
 
 @admin.register(RecipeLike)
 class RecipeLikeAdmin(admin.ModelAdmin):
     list_display = ('user', 'recipe')
     search_fields = ('recipe', 'user')
+    list_filter = ('user', 'recipe',)
 
 
 @admin.register(User)

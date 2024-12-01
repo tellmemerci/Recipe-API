@@ -21,6 +21,7 @@ class User(AbstractUser):
     role = models.CharField(max_length=50, default='Пользователь', verbose_name='Роль')
     history = HistoricalRecords()
 
+
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
@@ -42,34 +43,13 @@ class User(AbstractUser):
     def __str__(self):
         return self.username
 
-class Recipe(models.Model):
-    name = models.CharField(max_length=500, verbose_name='Рецепты')
-    photo_url = models.URLField(blank=True, verbose_name='Ссылка на главную фотографию ')
-    calories = models.IntegerField(null=True, blank=True, verbose_name='калории')
-    is_public = models.BooleanField(default=True, verbose_name='Публичность')
-    status = models.CharField(max_length=50, default='На модерации', verbose_name='Статус')
-    adversting_text = models.CharField(max_length=500, blank=True, verbose_name='Рекламирующий текст')
-    time_of_cooking = models.IntegerField(verbose_name='Время приготовления')
-    number_of_servings = models.IntegerField(verbose_name='Количество персон')
-    status_site = models.CharField(max_length=50, choices=(('На модерации', 'На модерации'), ('Опубликован', 'Опубликован'),
-                                                            ('Отклонят', 'Отклонят'),  ('Снят с публикации', 'Снят с публикации')),
-                             verbose_name='Статус на сайте')
-    history = HistoricalRecords()
-
-    class Meta:
-        verbose_name = 'Рецепт'
-        verbose_name_plural = 'Рецепты'
-
-    def __str__(self):
-        return self.name
-
 class Ingredient(models.Model):
     name = models.CharField(max_length=500, verbose_name='Название ингредиента')
-    measurement_name = models.CharField(max_length=50, choices=(('шт', 'шт'), ('л', 'л'), ('л', 'л'), ('мл', 'мл'),
-                                                                ('гр', 'гр'), ('чайная ложка', 'чайная ложка'),
-                                                                ('столовая ложка', 'столовая ложка')
-                                                                , ('кг', 'кг'), ('мг', 'мг')),
-                              default='гр', verbose_name='Измерение')
+    measurement_name = models.CharField(max_length=50, choices=(
+        ('шт', 'шт'), ('л', 'л'), ('мл', 'мл'), ('гр', 'гр'),
+        ('чайная ложка', 'чайная ложка'), ('столовая ложка', 'столовая ложка'),
+        ('кг', 'кг'), ('мг', 'мг')
+    ), default='гр', verbose_name='Измерение')
 
     class Meta:
         verbose_name = 'Ингредиент'
@@ -79,7 +59,28 @@ class Ingredient(models.Model):
         return self.name
 
 
+class Recipe(models.Model):
+    name = models.CharField(max_length=500, verbose_name='Рецепты')
+    photo_url = models.URLField(blank=True, verbose_name='Ссылка на главную фотографию ')
+    calories = models.IntegerField(null=True, blank=True, verbose_name='калории')
+    is_public = models.BooleanField(default=True, verbose_name='Публичность')
+    status = models.CharField(max_length=50, default='На модерации', verbose_name='Статус')
+    adversting_text = models.CharField(max_length=500, blank=True, verbose_name='Рекламирующий текст')
+    time_of_cooking = models.IntegerField(verbose_name='Время приготовления')
+    number_of_servings = models.IntegerField(verbose_name='Количество персон')
+    status_site = models.CharField(max_length=50, choices=(
+        ('На модерации', 'На модерации'), ('Опубликован', 'Опубликован'),
+        ('Отклонят', 'Отклонят'), ('Снят с публикации', 'Снят с публикации')
+    ), verbose_name='Статус на сайте')
+    ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
+    history = HistoricalRecords()
 
+    class Meta:
+        verbose_name = 'Рецепт'
+        verbose_name_plural = 'Рецепты'
+
+    def __str__(self):
+        return self.name
 
 
 class RecipeIngredient(models.Model):
@@ -94,8 +95,6 @@ class RecipeIngredient(models.Model):
 
     def __str__(self):
         return f"{self.ingredient.name} - {self.quantity}"
-
-
 
 class RecipeStep(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')

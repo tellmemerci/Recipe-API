@@ -6,7 +6,6 @@ from django.db.models import Q
 
 class RecipeByTimeOfCooking(generics.ListAPIView):
     serializer_class = RecipeSerializer
-
     def get_queryset(self):
         try:
             time_of_cooking = int(self.kwargs.get('time_of_cooking'))

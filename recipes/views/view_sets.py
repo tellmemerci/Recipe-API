@@ -7,6 +7,7 @@ from recipes.serializars.recipe import RecipeSerializer
 
 
 class RecipeViewSet(viewsets.ModelViewSet):
+    '''Вьюшка для класса Recipes'''
     queryset = Recipe.objects.all()
     serializer_class = RecipeSerializer
     def list(self, request):
