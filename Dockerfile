@@ -1,22 +1,18 @@
+# Основа образа - Python 3.12
 FROM python:3.12-slim
 
-
-# set work directory
-WORKDIR /usr/src/app
-
-# set environment variables
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV PYTHONUNBUFFERED 1
-
-# install dependencies
+# Обновляем pip
 RUN pip install --upgrade pip
-COPY ./requirements.txt /usr/src/app/requirements.txt
+
+# Установка необходимых пакетов
+COPY requirements.txt ./
 RUN pip install -r requirements.txt
 
-# copy entrypoint.sh
-COPY ./entrypoint.sh /usr/src/app/entrypoint.sh
-# copy project
-COPY . /usr/src/app/
-RUN chmod +x /usr/src/app/entrypoint.sh
-# run entrypoint.sh
-ENTRYPOINT ["/usr/src/app/entrypoint.sh"]
+# Создание директории для проекта
+WORKDIR /app
+
+# Копирование файлов проекта в контейнер
+COPY . /app
+
+# Запуск Django сервера с миграциями, если они нужны
+CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]
