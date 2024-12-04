@@ -34,10 +34,3 @@ class RecipeSerializer(serializers.ModelSerializer):
             if Recipe.objects.filter(name=value).exists():
                 raise serializers.ValidationError(f'Рецепт с названием "{value}" уже существует.')
         return value
-
-    def validate_ingredients(self, data):
-        ingredients = data.get('ingredients')
-        if ingredients and ingredients.count() > 4:
-            raise serializers.ValidationError('Количество ингредиентов не должно превышать 25.')
-        return data
-

@@ -2,7 +2,7 @@ from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
-
+from .export import RecipeResource
 @admin.register(RecipeCategory)
 class RecipeCategoryAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'category_name')
@@ -28,13 +28,15 @@ class RecipeIngredientInline(admin.TabularInline):
     extra = 1
 
 class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
+    resource_class = RecipeResource  # Указываем ресурс для импорта/экспорта
     list_display = ('name', 'adversting_text', 'status_site')
     history_list_display = ['status']
     search_fields = ('name', 'adversting_text')
     list_filter = ('status_site',)
     inlines = [RecipeIngredientInline]
-admin.site.register(Recipe, RecipeAdmin)
 
+# Регистрируем класс админки
+admin.site.register(Recipe, RecipeAdmin)
 @admin.register(RecipeStep)
 class RecipeStepAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'step_number', 'description')

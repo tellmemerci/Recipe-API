@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'drf_yasg',
     'simple_history',
     'rest_framework',
+    'rest_framework_swagger',
 ]
 
 MIDDLEWARE = [

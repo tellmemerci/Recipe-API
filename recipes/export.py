@@ -4,5 +4,6 @@ from recipes.models import Recipe
 class RecipeResource(ModelResource):
     class Meta:
         model = Recipe
-        fields = '__all__'
+        fields = ('id', 'name', 'adversting_text', 'status_site', 'time_of_cooking')
         formats = [XLSX]
+
