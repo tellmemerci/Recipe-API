@@ -6,4 +6,3 @@ class RecipeResource(ModelResource):
         model = Recipe
         fields = ('id', 'name', 'adversting_text', 'status_site', 'time_of_cooking')
         formats = [XLSX]
-
