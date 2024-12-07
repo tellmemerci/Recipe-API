@@ -1,6 +1,6 @@
+import django_filters
 from rest_framework import serializers
 from recipes.models import Recipe
-
 
 class RecipeSerializer(serializers.ModelSerializer):
     '''Сериализатор класса Recipes (Рецепты)'''

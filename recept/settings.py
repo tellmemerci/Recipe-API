@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'simple_history',
     'rest_framework',
     'rest_framework_swagger',
+    'django_extensions',
+    'django_filters',
 ]
 
 MIDDLEWARE = [
@@ -134,6 +136,7 @@ REST_FRAMEWORK = {
     #pagination
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
     'PAGE_SIZE': 5,
+    'DEFAULT_FILTER_BACKENDS': ['django_filters.rest_framework.DjangoFilterBackend'],
 }
 
 

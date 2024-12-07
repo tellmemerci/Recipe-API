@@ -1,11 +1,11 @@
 from rest_framework import viewsets
 from recipes.models import Ingredient
 from recipes.serializars.Ingredients import IngredientSerializer
-from rest_framework.filters import SearchFilter
+from recipes.views.filter_by_ingredient import IngredientFilter
 
 class IngredientViewSet(viewsets.ModelViewSet):
     '''Вьюшка для рецептов, которые есть в базе данных'''
     queryset = Ingredient.objects.all()
     serializer_class = IngredientSerializer
-    filter_backends = [SearchFilter]
+    filterset_class = IngredientFilter
     search_fields = ['name']

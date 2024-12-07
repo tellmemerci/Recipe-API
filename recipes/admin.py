@@ -2,7 +2,48 @@ from django.contrib import admin
 from import_export.admin import ImportExportActionModelAdmin
 from simple_history.admin import SimpleHistoryAdmin
 from .models import User, Recipe, RecipeIngredient, RecipeStep, RecipeLike, RecipeComment, Calories, UserRecipes, RecipeCategory, Ingredient
-from .export import RecipeResource
+from import_export import resources
+from recipes.models import Recipe
+
+
+class RecipeIngredientInline(admin.TabularInline):
+    model = RecipeIngredient
+    extra = 1
+
+class RecipeResource(resources.ModelResource):
+    class Meta:
+        model = Recipe
+        fields = ('id', 'name', 'adversting_text', 'status_site', 'time_of_cooking')
+
+    def dehydrate_time_of_cooking(self, obj):
+        """Метод для форматирования времени приготовления."""
+        return f"{obj.time_of_cooking} минут"
+
+    def get_name(self, obj):
+        """Возвращает имя с дополнительным текстом."""
+        return f"{obj.name} (Рецепт)"
+
+
+class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
+    resource_class = RecipeResource  # Указываем класс ресурса для импорта/экспорта
+    list_display = ('name', 'adversting_text', 'status_site')
+    history_list_display = ['status']
+    search_fields = ('name', 'adversting_text')  # Убедитесь, что это поле существует в модели
+    list_filter = ('status_site',)
+    inlines = [RecipeIngredientInline]  # Если нужны инлайны для других моделей
+
+    def get_export_queryset(self, request):
+        """Фильтруем только опубликованные рецепты для экспорта."""
+        queryset = super().get_export_queryset(request)  # Получаем queryset по умолчанию
+        print(queryset)
+        return queryset.filter(status_site='Опубликован')  # Фильтруем только по статусу "Опубликован"
+
+
+
+# Регистрируем класс админки
+admin.site.register(Recipe, RecipeAdmin)
+
+
 @admin.register(RecipeCategory)
 class RecipeCategoryAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'category_name')
@@ -12,6 +53,7 @@ class RecipeCategoryAdmin(admin.ModelAdmin):
     @admin.display(description='Custom Display')
     def category_name(self, obj):
         return f"Custom: {obj.recipe.category.name}"
+
 
 @admin.register(RecipeComment)
 class RecipeCommentAdmin(admin.ModelAdmin):
@@ -23,20 +65,7 @@ class RecipeCommentAdmin(admin.ModelAdmin):
     search_fields = ('user', 'text')
     #readonly_fields = ('text', 'created_at')
 
-class RecipeIngredientInline(admin.TabularInline):
-    model = RecipeIngredient
-    extra = 1
 
-class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
-    resource_class = RecipeResource  # Указываем ресурс для импорта/экспорта
-    list_display = ('name', 'adversting_text', 'status_site')
-    history_list_display = ['status']
-    search_fields = ('name', 'adversting_text')
-    list_filter = ('status_site',)
-    inlines = [RecipeIngredientInline]
-
-# Регистрируем класс админки
-admin.site.register(Recipe, RecipeAdmin)
 @admin.register(RecipeStep)
 class RecipeStepAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'step_number', 'description')
