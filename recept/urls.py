@@ -43,4 +43,5 @@ urlpatterns = [
     path('recipessteps/', include('recipes.urls')),
     path('recipesingredient/', include('recipes.urls')),
     path('ingredient/', include('recipes.urls')),
+    path('recipeslike/', include('recipes.urls')),
 ]

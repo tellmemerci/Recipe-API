@@ -1,7 +1,7 @@
 from rest_framework import viewsets
 from recipes.models import Ingredient
 from recipes.serializars.Ingredients import IngredientSerializer
-from recipes.views.filter_by_ingredient import IngredientFilter
+from recipes.views.filters.filter_by_ingredient import IngredientFilter
 
 class IngredientViewSet(viewsets.ModelViewSet):
     '''Вьюшка для рецептов, которые есть в базе данных'''

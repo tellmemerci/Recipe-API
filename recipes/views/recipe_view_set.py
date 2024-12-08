@@ -3,7 +3,7 @@ from rest_framework.filters import SearchFilter
 from rest_framework.response import Response
 from django.db.models import Q
 from rest_framework.decorators import action
-from recipes.models import Recipe, Ingredient
+from recipes.models import Recipe
 from recipes.serializars.Recipe import RecipeSerializer
 from rest_framework import status
 
