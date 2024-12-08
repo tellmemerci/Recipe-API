@@ -6,3 +6,4 @@ django-simple-history~=3.7.0
 django-import-export
 drf-yasg
 celery==5.4.0
+redis==5.2.1

@@ -23,8 +23,7 @@ class RecipeModelViewSet(viewsets.ModelViewSet):
         recipes_object = Recipe.objects.filter(
             (~Q(is_public=True) | Q(status_site='На модерации')) & Q(calories__gt=500) & Q(time_of_cooking__lt=40)
         )
-        #  Добавьте сериализацию и возврат данных здесь. Пример:
-        serializer = RecipeSerializer(recipes_object, many=True)  # Предполагается наличие RecipeSerializer
+        serializer = RecipeSerializer(recipes_object, many=True)
         return Response(serializer.data)
 
     @action(methods=["GET"], detail=False)
@@ -48,11 +47,11 @@ class RecipeModelViewSet(viewsets.ModelViewSet):
     @action(methods=['POST'], detail=False)
     def create_recipe(self, request):
         """Создание нового рецепта."""
-        serializer = RecipeSerializer(data=request.data)  # Получаем данные из запроса
+        serializer = RecipeSerializer(data=request.data)
 
         if serializer.is_valid():
-            serializer.save()  # Сохраняем новый рецепт
-            return Response(serializer.data, status=status.HTTP_201_CREATED)  # Возвращаем данные созданного рецепта
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

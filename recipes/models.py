@@ -1,6 +1,8 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from simple_history.models import HistoricalRecords
+
+
 class User(AbstractUser):
     ''' Модель описывающая пользователя:
     gender - пол
@@ -21,11 +23,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=50, default='Пользователь', verbose_name='Роль')
     history = HistoricalRecords()
 
-
     class Meta:
         verbose_name = 'Пользователь'
         verbose_name_plural = 'Пользователи'
-
 
     groups = models.ManyToManyField(
         'auth.Group',
@@ -42,6 +42,7 @@ class User(AbstractUser):
 
     def __str__(self):
         return self.username
+
 
 class Ingredient(models.Model):
     name = models.CharField(max_length=500, verbose_name='Название ингредиента')
@@ -96,6 +97,7 @@ class RecipeIngredient(models.Model):
     def __str__(self):
         return f"{self.ingredient.name} - {self.quantity}"
 
+
 class RecipeStep(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     step_number = models.IntegerField(verbose_name='Номер шага')
@@ -110,6 +112,7 @@ class RecipeStep(models.Model):
         verbose_name = 'Шаг рецепта'
         verbose_name_plural = 'Шаги рецептов'
 
+
 class RecipeLike(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Лайк на рецепт')
@@ -119,6 +122,7 @@ class RecipeLike(models.Model):
         unique_together = ('user', 'recipe')
         verbose_name = 'Лайк рецепта'
         verbose_name_plural = 'Лайки рецептов'
+
 
 class RecipeComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
@@ -134,6 +138,7 @@ class RecipeComment(models.Model):
     class Meta:
         verbose_name = 'Комментарий к рецепту'
         verbose_name_plural = 'Комментарии к рецептам'
+
 
 class Calories(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, related_name='calories_info', verbose_name='Рецепт')
@@ -156,12 +161,11 @@ class UserRecipes(models.Model):
     created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата создания')
     history = HistoricalRecords()
 
-
-
     class Meta:
         unique_together = ('user', 'recipe')
         verbose_name = 'Рецепт пользователя'
         verbose_name_plural = 'Рецепты пользователей'
+
 
 class RecipeCategory(models.Model):
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')

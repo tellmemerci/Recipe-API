@@ -10,13 +10,14 @@ class RecipeIngredientInline(admin.TabularInline):
     model = RecipeIngredient
     extra = 1
 
+
 class RecipeResource(resources.ModelResource):
     class Meta:
         model = Recipe
         fields = ('id', 'name', 'adversting_text', 'status_site', 'time_of_cooking')
 
     def dehydrate_time_of_cooking(self, obj):
-        """Метод для форматирования времени приготовления."""
+        """Метод для форматирования времени приготовления. Для экспорта"""
         return f"{obj.time_of_cooking} минут"
 
     def get_name(self, obj):
@@ -25,22 +26,20 @@ class RecipeResource(resources.ModelResource):
 
 
 class RecipeAdmin(SimpleHistoryAdmin, ImportExportActionModelAdmin):
-    resource_class = RecipeResource  # Указываем класс ресурса для импорта/экспорта
+    resource_class = RecipeResource
     list_display = ('name', 'adversting_text', 'status_site')
     history_list_display = ['status']
-    search_fields = ('name', 'adversting_text')  # Убедитесь, что это поле существует в модели
+    search_fields = ('name', 'adversting_text')
     list_filter = ('status_site',)
-    inlines = [RecipeIngredientInline]  # Если нужны инлайны для других моделей
+    inlines = [RecipeIngredientInline]
 
     def get_export_queryset(self, request):
         """Фильтруем только опубликованные рецепты для экспорта."""
-        queryset = super().get_export_queryset(request)  # Получаем queryset по умолчанию
+        queryset = super().get_export_queryset(request)
         print(queryset)
-        return queryset.filter(status_site='Опубликован')  # Фильтруем только по статусу "Опубликован"
+        return queryset.filter(status_site='Опубликован')
 
 
-
-# Регистрируем класс админки
 admin.site.register(Recipe, RecipeAdmin)
 
 
@@ -48,7 +47,6 @@ admin.site.register(Recipe, RecipeAdmin)
 class RecipeCategoryAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'category_name')
     list_filter = ('recipe', 'category_name')
-
 
     @admin.display(description='Custom Display')
     def category_name(self, obj):
@@ -63,7 +61,6 @@ class RecipeCommentAdmin(admin.ModelAdmin):
     list_display_links = ('user', 'text', 'recipe', 'status')
     raw_id_fields = ('user', 'recipe')
     search_fields = ('user', 'text')
-    #readonly_fields = ('text', 'created_at')
 
 
 @admin.register(RecipeStep)
@@ -78,7 +75,6 @@ class RecipeStepAdmin(admin.ModelAdmin):
 class RecipeIngredientAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'ingredient', 'quantity', 'get_measurement_unit')
     search_fields = ('recipe', 'ingredient')
-
 
     def get_measurement_unit(self, obj):
         """Метод для отображения единицы измерения."""
@@ -96,6 +92,7 @@ class RecipeIngredientAdmin(admin.ModelAdmin):
             return "Нет данных"
 
     quantity_with_unit.short_description = "Количество и единица"
+
 
 @admin.register(UserRecipes)
 class UserRecipesAdmin(admin.ModelAdmin):
@@ -115,17 +112,18 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'role')
     search_fields = ('username', 'role',)
 
+
 @admin.register(Calories)
 class CaloriesAdmin(admin.ModelAdmin):
     list_display = ('recipe', 'protein', 'fat', 'carbohydrates')
     search_fields = ('recipe',)
+
 
 @admin.register(Ingredient)
 class Admin(admin.ModelAdmin):
     search_fields = ('name',)
     list_display = ('name', 'measurement_name')
     list_filter = ('measurement_name',)
-
 
 
 admin.site.site_header = 'Администрирование сайта рецептов'
