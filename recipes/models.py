@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from simple_history.models import HistoricalRecords
-
+from django.utils import timezone
 
 class User(AbstractUser):
     ''' Модель описывающая пользователя:
@@ -45,6 +45,7 @@ class User(AbstractUser):
 
 
 class Ingredient(models.Model):
+    '''Класс с ингредиентами, работает как справочник'''
     name = models.CharField(max_length=500, verbose_name='Название ингредиента')
     measurement_name = models.CharField(max_length=50, choices=(
         ('шт', 'шт'), ('л', 'л'), ('мл', 'мл'), ('гр', 'гр'),
@@ -128,7 +129,7 @@ class RecipeComment(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Пользователь')
     recipe = models.ForeignKey(Recipe, on_delete=models.CASCADE, verbose_name='Рецепт')
     text = models.TextField(verbose_name='Комментарий')
-    created_at = models.DateTimeField(auto_now_add=True)
+    created_at = models.DateTimeField(default=timezone.now)
     status = models.CharField(max_length=50, choices=(('На модерации', 'На модерации'), ('Опубликован', 'Опубликован'),
                                                       ('Отклонят', 'Отклонят')),
                               default='На модерации', verbose_name='Статус комментария')
@@ -136,8 +137,12 @@ class RecipeComment(models.Model):
     history = HistoricalRecords()
 
     class Meta:
+        '''Использование метода ordering'''
+
+
         verbose_name = 'Комментарий к рецепту'
         verbose_name_plural = 'Комментарии к рецептам'
+        ordering = ['created_at']
 
 
 class Calories(models.Model):

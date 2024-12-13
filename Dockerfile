@@ -1,18 +1,20 @@
-# Основа образа - Python 3.12
+# Указываем базовый образ
 FROM python:3.12-slim
+
+# Условия работы
+WORKDIR /app
 
 # Обновляем pip
 RUN pip install --upgrade pip
 
-# Установка необходимых пакетов
+# Копируем файл зависимостей
 COPY requirements.txt ./
+
+# Устанавливаем необходимые пакеты
 RUN pip install -r requirements.txt
 
-# Создание директории для проекта
-WORKDIR /app
+# Копируем все файлы проекта в контейнер
+COPY . .
 
-# Копирование файлов проекта в контейнер
-COPY . /app
-
-# Запуск Django сервера с миграциями, если они нужны
+# Запуск приложения Django
 CMD ["bash", "-c", "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"]

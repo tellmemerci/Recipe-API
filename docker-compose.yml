@@ -1,15 +1,13 @@
-version: '3.9'
+version: '3.8'
 
 services:
-  redis:
-    image: redis
-    restart: always
-
-  recept:
-    restart: always
-    build:
-      context: ./recept
+  web:
+    build: .
+    volumes:
+      - .:/app  # Это указывает Docker копировать файлы из текущей директории в /app в контейнере
     ports:
-      - '8000:8000'
-    command:
-      - "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+      - "8000:8000"
+    command: bash -c "python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+
+  redis:
+    image: "redis:alpine"
