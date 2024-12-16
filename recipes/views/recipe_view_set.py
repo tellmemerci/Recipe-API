@@ -6,6 +6,8 @@ from rest_framework.decorators import action
 from recipes.models import Recipe
 from recipes.serializars.Recipe import RecipeSerializer
 from rest_framework import status
+from django.shortcuts import get_object_or_404
+from  django.http import Http404
 
 class RecipeModelViewSet(viewsets.ModelViewSet):
     '''Модель для отображения класса Reipe (Рецепты)'''
@@ -13,6 +15,12 @@ class RecipeModelViewSet(viewsets.ModelViewSet):
     serializer_class = RecipeSerializer
     filter_backends = [SearchFilter]
     search_fields = ['name']
+
+    def get_object(self):
+        """Переопределение метода для получения объекта или возврата ошибки 404."""
+        obj = get_object_or_404(Recipe, pk=self.kwargs.get('pk'))
+        return obj
+
 
     @action(methods=["GET"], detail=False)
     def get_recipes(self, request):
@@ -55,11 +63,15 @@ class RecipeModelViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+
+
+
 def get_serializer(self, *args, **kwargs):
         '''Получение recipe ID для проверки уникальности в serializaes (recipe)'''
 
         if self.action == 'update':
             kwargs['context'] = {'recipe_id': self.kwargs['pk']}
         return super().get_serializer(*args, **kwargs)
+
 
 

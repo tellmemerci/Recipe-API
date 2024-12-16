@@ -1,0 +1,33 @@
+1) filter
+ .venv\Scripts\activate
+ python manage.py shell
+>>> from recipes.models import Recipe
+>>> results = Recipe.objects.filter(time_of_cooking__gt=60)
+>>> for recipe in results:
+...     print(recipe)
+...
+Рататуй
+Лолочкин том ям
+Крем брюле
+tset
+
+2) exclude()
+>>> from recipes.models import Recipe
+>>> active_recipes = Recipe.objects.exclude(is_public=False)
+>>> for recipe in active_recipes:
+...     print(recipe)
+...
+Тестовый рецепт 3
+Следка под шубой
+Салат "Мимоза"
+Рататуй
+Борщ
+Раковый суп
+Суп из чечевицы
+Лолочкин том ям
+Крем брюле
+tset
+TEST POST
+>>>
+
+3)

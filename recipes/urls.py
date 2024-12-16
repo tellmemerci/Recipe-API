@@ -21,6 +21,7 @@ from recipes.views.recipes_steps_view_sets import RecipeStepViewSet
 from .views.recipes_ingredients_view_sets import RecipeIngredientViewSet
 from .views.ingredient_view_sets import IngredientViewSet
 import recipes.views.task_view as task_view
+from recipes.views.recipe_detail_view import RecipeDetailView
 
 
 router = DefaultRouter()
@@ -30,14 +31,14 @@ router.register('recipe-ingredient', RecipeIngredientViewSet, basename='recipe-i
 router.register('ingredient', IngredientViewSet, basename='ingredient')
 router.register('recipe-like', RecipeLikeViewSet, basename='recipe-like')
 
+
+
 urlpatterns = [
     path('admin/', admin.site.urls),
 
     path('swagger/', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     path('redoc/', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
-    path('home/', task_view.home, name='home'),
 
-    # Include REST framework router URLs
     path('', include(router.urls)),
     ]
 

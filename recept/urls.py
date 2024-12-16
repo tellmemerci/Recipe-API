@@ -20,6 +20,7 @@ from django.urls import path, include
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 from rest_framework import permissions
+from recipes.views.recipe_detail_view import RecipeDetailView
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -44,5 +45,5 @@ urlpatterns = [
     path('recipesingredient/', include('recipes.urls')),
     path('ingredient/', include('recipes.urls')),
     path('recipeslike/', include('recipes.urls')),
-    path('home/', include('recipes.urls')),
+    path('recipe_info/<int:pk>/', RecipeDetailView.as_view(), name='recipe-detail'),
 ]

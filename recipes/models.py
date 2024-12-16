@@ -2,7 +2,7 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from simple_history.models import HistoricalRecords
 from django.utils import timezone
-
+from django.urls import reverse
 class User(AbstractUser):
     ''' Модель описывающая пользователя:
     gender - пол
@@ -61,6 +61,15 @@ class Ingredient(models.Model):
         return self.name
 
 
+class RecipeManager(models.Manager):
+    def get_queryset(self):
+        # Вызов базового метода, чтобы получить QuerySet
+        return super().get_queryset().filter(is_public=True).order_by('time_of_cooking')
+
+    def active(self):
+            return self.get_queryset()
+
+
 class Recipe(models.Model):
     name = models.CharField(max_length=500, verbose_name='Рецепты')
     photo_url = models.URLField(blank=True, verbose_name='Ссылка на главную фотографию ')
@@ -76,6 +85,12 @@ class Recipe(models.Model):
     ), verbose_name='Статус на сайте')
     ingredients = models.ManyToManyField(Ingredient, through='RecipeIngredient')
     history = HistoricalRecords()
+    objects = RecipeManager()
+
+    def get_absolute_url(self):
+        """Метод для получения абсолютного URL объекта."""
+        # Используем reverse для получения URL объекта
+        return reverse('recipe-detail', kwargs={'pk': self.pk})
 
     class Meta:
         verbose_name = 'Рецепт'
@@ -183,3 +198,5 @@ class RecipeCategory(models.Model):
     class Meta:
         verbose_name = 'Категория рецепта'
         verbose_name_plural = 'Категории рецептов'
+
+

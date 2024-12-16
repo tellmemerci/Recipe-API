@@ -9,7 +9,7 @@ https://docs.djangoproject.com/en/4.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.2/ref/settings/
 """
-
+from celery.schedules import crontab
 from pathlib import Path
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -151,4 +151,22 @@ DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
 EMAIL_ADMIN = EMAIL_HOST_USER
 
-CELERY_BROKER_URL = 'redis://redis:6379'
+# Настройки Celery
+CELERY_BROKER_URL = 'redis://redis:6379/0'
+CELERY_RESULT_BACKEND = 'redis://redis:6379/0'
+CELERY_ACCEPT_CONTENT = ['json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+CELERY_TIMEZONE = 'UTC'
+
+# Настройки для периодических задач
+CELERY_BEAT_SCHEDULE = {
+    'task1': {
+        'task': 'recipes.tasks.task1',
+        'schedule': 30.0,  # каждые 5 минут
+    },
+    'task2': {
+        'task': 'recipes.tasks.task2',
+        'schedule': 60.0,  # каждые 10 минут
+    },
+}
