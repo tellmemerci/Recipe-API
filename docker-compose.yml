@@ -30,3 +30,9 @@ services:
       - .:/app
     depends_on:
       - redis
+
+  mailhog:
+    image: mailhog/mailhog
+    ports:
+      - "1025:1025"  # SMTP сервер
+      - "8025:8025"  # Web интерфейс

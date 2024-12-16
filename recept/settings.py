@@ -146,6 +146,8 @@ EMAIL_PORT = 465
 EMAIL_HOST_USER = 'tima.uramov@yandex.ru'
 EMAIL_HOST_PASSWORD = 'fmztbopverklzakv'
 EMAIL_USE_TLS = True
+EMAIL_USE_TLS = False  # Измените на False
+EMAIL_USE_SSL = True   # Добавьте эту строку
 
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 SERVER_EMAIL = EMAIL_HOST_USER
